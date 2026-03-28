@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,19 +27,19 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Toggle to the sign up mode by clicking the 'Daftar' button so the sign-up fields (including owner name) appear.
+        # -> Toggle to the sign up mode by clicking the 'Daftar' button.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div/button[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the owner name field with 'Owner TC005', then toggle to sign-in mode, then toggle back to sign-up mode to verify the owner name field and email/password fields are present.
+        # -> Fill the owner name field with 'Owner TC005', toggle to sign-in mode, then toggle back to sign-up mode to verify toggling works.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
@@ -56,7 +55,7 @@ async def run_test():
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Daftar' button to switch to sign-up mode so the owner name field is shown (click element index 9).
+        # -> Toggle to Sign up mode and verify the owner name field is present (then stop).
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div/button[2]').nth(0)

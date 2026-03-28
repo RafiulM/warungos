@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,20 +27,14 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Navigate to /dashboard and observe whether unauthenticated access redirects to /auth; then confirm the authentication form is present.
-        await page.goto("http://127.0.0.1:3001/dashboard", wait_until="commit", timeout=10000)
-        
-        # -> Navigate to http://127.0.0.1:3001/dashboard and observe whether unauthenticated access redirects to /auth, then confirm the authentication form is displayed.
-        await page.goto("http://127.0.0.1:3001/dashboard", wait_until="commit", timeout=10000)
-        
-        # -> Navigate directly to /dashboard and observe whether the app redirects back to /auth, then confirm the authentication form is present.
-        await page.goto("http://127.0.0.1:3001/dashboard", wait_until="commit", timeout=10000)
+        # -> Navigate to /dashboard and confirm the app redirects unauthenticated users back to /auth and that the authentication form is displayed.
+        await page.goto("http://localhost:3001/dashboard", wait_until="commit", timeout=10000)
         
         # --> Test passed — verified by AI agent
         frame = context.pages[-1]

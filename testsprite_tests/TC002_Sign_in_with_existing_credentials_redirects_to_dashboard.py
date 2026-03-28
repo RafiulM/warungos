@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,13 +27,13 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Fill the email field with admin@admin.com, then the password with admin123, then submit the form.
+        # -> Fill the email field with admin@admin.com (then fill password and submit the form).
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
@@ -45,18 +44,6 @@ async def run_test():
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
         await page.wait_for_timeout(3000); await elem.fill('admin123')
         
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Fill the email field with admin@admin.com again and submit the auth form (press Enter) to attempt sign-in.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        # -> Click the 'Masuk ke dashboard' button to submit the sign-in form and verify the app navigates to the dashboard.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)

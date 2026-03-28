@@ -8,13 +8,24 @@
   "executionArgs": {
     "projectName": "warungos",
     "projectPath": "/Users/rafiulm/warungos",
-    "testIds": [],
-    "additionalInstruction": "Use TESTSPRITE_BASE_URL when it is provided. If that env var is absent, prefer the Vercel deployment host from VERCEL_BRANCH_URL, VERCEL_URL, or VERCEL_PROJECT_PRODUCTION_URL. Only fall back to http://127.0.0.1:3001 for local production runs. The app requires authentication for dashboard routes, so create a new email/password account through the /auth sign-up flow if needed, then continue through the authenticated flows. Prefer end-to-end validation of login, navigation, checkout, inventory, debt, report, and settings flows.",
-    "serverMode": "production",
+    "testIds": [
+      "TC001",
+      "TC002",
+      "TC003",
+      "TC004",
+      "TC005",
+      "TC006",
+      "TC007",
+      "TC008",
+      "TC009",
+      "TC010"
+    ],
+    "additionalInstruction": "Execute at most these 10 frontend cases only: TC001, TC002, TC003, TC004, TC005, TC006, TC007, TC008, TC009, TC010. Do not generate or run any additional test cases beyond this cap.",
+    "serverMode": "development",
     "envs": {
-      "API_KEY": "sk-user-OqR8Xtm534rcAAhm-qcNwscTmx8cuwqzhfdP6zMBcfLIUyDJf_C_VVdRvJL5J7uqI4VQU0DyGmQGmlOvKZngQ9pBboUjRYwCmOVIq4Qo6rde28dVdn3FkMhXSFqKiM75u4o"
+      "API_KEY": "sk-user-BVlSiBsNKePRHR8j3Q5YCKZ8imsv2M5mFLZ63OvnuyLTptLajSO-zP1MMWYv5gH86CGQt63xTup9JlpRIYWrJ8FvTpEFmGo63EE9obThICHs5stPnMrb2pn6m_Us9BGJItA"
     }
   },
-  "serverPort": 59224,
-  "proxy": "http://38f431c7-00f1-441e-8f10-6a8c7ab2e2a9:5MSoZlWXgD5WCtjDOeTtNuy3ZlKosvSu@tun.testsprite.com:8080"
+  "serverPort": 60356,
+  "proxy": "http://f16f7e7e-036a-4008-bd4f-1bfca0fc0428:BFU0VWb2uI0QGtjDOVT44ekwxwccDdSF@tun.testsprite.com:8080"
 }
