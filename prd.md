@@ -1,372 +1,198 @@
-# Product Specification - Warung OS
-
-## 1. Ringkasan Produk
-Warung OS adalah aplikasi web operasional untuk pemilik warung dan UMKM kecil di Indonesia. Produk ini menyatukan kasir cepat, inventaris barang jadi, buku hutang pelanggan, laporan usaha sederhana, dan pengaturan profil warung dalam satu workspace per pengguna.
-
-Dokumen ini disusun berdasarkan implementasi aplikasi yang ada di repository saat ini, bukan versi konseptual. Tujuannya adalah memberi spesifikasi produk yang akurat terhadap perilaku aplikasi sekarang, sekaligus menandai area yang masih berupa placeholder atau belum lengkap.
-
-## 2. Masalah yang Diselesaikan
-Pemilik warung kecil sering menjalankan operasi harian dengan kombinasi buku tulis, kalkulator, ingatan pribadi, dan chat WhatsApp. Dampaknya:
-
-- transaksi cepat, tetapi tidak tercatat rapi
-- stok barang baru dicek saat hampir habis
-- kasbon pelanggan sulit ditagih dan sulit dipantau
-- laporan usaha tidak konsisten untuk evaluasi atau pengajuan modal
-- data usaha bercampur dengan aktivitas pribadi
-
-Warung OS dirancang untuk mengurangi beban admin harian itu dengan alur yang sederhana, visual, dan cocok dipakai dari tablet atau layar sentuh.
-
-## 3. Target Pengguna
-### Pengguna utama
-- Pemilik warung kelontong
-- Pemilik warung makan kecil
-- Pelaku usaha rumahan dengan stok barang jadi
-
-### Karakteristik pengguna
-- Tidak selalu terbiasa dengan software bisnis yang kompleks
-- Butuh input cepat saat jam ramai
-- Lebih nyaman dengan istilah operasional sehari-hari daripada istilah akuntansi formal
-- Sering memakai WhatsApp sebagai jalur komunikasi utama dengan pelanggan
-
-## 4. Nilai Utama Produk
-- Kasir cepat dengan alur tap-to-sell yang mudah dipahami
-- Stok barang langsung berkurang ketika transaksi tersimpan
-- Kasbon pelanggan tercatat dan mudah ditindaklanjuti
-- Ringkasan usaha bisa dibaca tanpa perlu memahami laporan akuntansi penuh
-- Setiap pengguna memiliki workspace warung sendiri setelah login
-
-## 5. Sasaran Produk
-### Sasaran rilis saat ini
-- Menyediakan fondasi produk operasional warung berbasis akun
-- Menghubungkan UI ke backend dan database Postgres
-- Menyimpan transaksi, produk, hutang, dan pengaturan per pengguna
-- Menyediakan dashboard dan laporan dasar yang bisa dipakai untuk monitoring harian
-
-### Bukan fokus rilis saat ini
-- POS offline-first
-- printer receipt atau integrasi hardware kasir
-- integrasi pembayaran langsung dengan QRIS atau bank
-- integrasi WhatsApp provider sungguhan
-- multi-branch atau multi-store management
-- pembelian ke supplier, bahan baku, dan manajemen gudang kompleks
-- laporan akuntansi formal lengkap
-
-## 6. Platform dan Posisi Produk
-- Platform utama: web app
-- Optimasi pengalaman: dashboard dan kasir tablet-first, tetap dapat dibuka di desktop
-- Model akses: pengguna login dengan email dan password
-- Arsitektur aplikasi: monolith Next.js dengan App Router, route handlers, Better Auth, Drizzle ORM, dan PostgreSQL
-
-## 7. Cakupan Fitur Saat Ini
-### 7.1 Autentikasi dan workspace pengguna
-Pengguna dapat:
-
-- mendaftar akun baru dengan nama, email, dan password
-- masuk dengan email dan password
-- logout dari aplikasi
-
-Perilaku sistem:
-
-- sesi dikelola oleh Better Auth
-- setelah login, aplikasi melakukan bootstrap state dari backend
-- bila profil warung pengguna belum ada, sistem otomatis membuat workspace awal beserta profil default
-
-### 7.2 Dashboard operasional
-Dashboard menampilkan:
-
-- omzet hari ini
-- jumlah transaksi hari ini
-- jumlah item stok menipis
-- total kasbon aktif
-- transaksi terakhir beserta itemnya
-- timeline transaksi terbaru
-- daftar produk yang perlu perhatian
-- daftar kasbon terbaru
-
-Tujuan utama dashboard adalah memberi ringkasan cepat tanpa mengganggu layar kasir.
-
-### 7.3 Kasir cepat
-Halaman kasir memungkinkan pengguna:
-
-- melihat katalog produk aktif
-- mencari produk berdasarkan nama atau deskripsi
-- memfilter produk berdasarkan kategori
-- menambahkan produk ke keranjang dengan satu tap
-- mengubah quantity item dalam keranjang
-- menghapus item dari keranjang
-- memilih metode pembayaran aktif
-- menyelesaikan checkout
-
-Perilaku sistem saat checkout:
-
-- validasi bahwa keranjang tidak kosong
-- validasi bahwa setiap produk masih punya stok cukup
-- membuat transaksi baru
-- membuat detail item transaksi
-- mengurangi stok setiap produk yang terjual
-- mengembalikan data transaksi dan stok terbaru ke frontend
-
-Metode pembayaran yang saat ini didukung:
-
-- Tunai
-- QRIS
-- Transfer
-
-Kategori produk yang saat ini dipakai:
-
-- Makanan
-- Minuman
-- Sembako
-- Kebutuhan Harian
-
-### 7.4 Inventaris barang jadi
-Halaman inventaris memungkinkan pengguna:
-
-- melihat seluruh produk
-- mencari produk berdasarkan nama, kategori, atau catatan
-- menambah produk baru
-- mengubah data produk
-- menambah stok melalui aksi restock
-- melihat produk yang masuk area stok menipis
-- melihat estimasi nilai modal stok
-
-Data produk yang disimpan:
-
-- nama produk
-- kategori
-- harga beli
-- harga jual
-- stok saat ini
-- stok minimum
-- deskripsi singkat
-
-Fokus inventaris saat ini adalah barang jadi. Belum ada konsep bahan baku, supplier, batch, expiry, atau purchase order.
-
-### 7.5 Buku hutang pelanggan
-Halaman buku hutang memungkinkan pengguna:
-
-- menambah catatan kasbon baru
-- mencari hutang berdasarkan nama atau nomor WhatsApp
-- memfilter status semua, belum lunas, atau lunas
-- menandai hutang sebagai lunas
-- mengirim pengingat hutang
-
-Data hutang yang disimpan:
-
-- nama peminjam
-- nomor WhatsApp
-- nominal hutang
-- tanggal pencatatan
-- tanggal jatuh tempo
-- status lunas
-- waktu terakhir pengingat dikirim
-
-Catatan implementasi penting:
-
-- tombol pengingat saat ini belum terhubung ke provider WhatsApp
-- aksi pengingat hanya memperbarui `lastReminderAt` di backend dan menampilkan feedback di UI
-
-### 7.6 Laporan usaha
-Halaman laporan menampilkan ringkasan untuk periode:
-
-- harian
-- mingguan
-- bulanan
-
-Metrik yang dihitung:
-
-- omzet
-- harga pokok barang terjual
-- pengeluaran
-- laba kotor
-- laba bersih
-- rata-rata nilai transaksi
-- jumlah transaksi
-- tren omzet
-- produk dengan pergerakan penjualan tertinggi
-
-Sumber data:
-
-- transaksi tersimpan
-- item transaksi
-- pengeluaran tersimpan di database
-
-Catatan implementasi penting:
-
-- saat ini belum ada UI untuk menambah atau mengubah pengeluaran
-- data pengeluaran sudah ada di model data dan dipakai oleh logika laporan
-- preview PDF sudah tersedia sebagai layout visual
-- tombol print dan export PDF masih placeholder
-
-### 7.7 Pengaturan warung
-Halaman pengaturan memungkinkan pengguna:
-
-- mengubah nama warung
-- mengubah tagline
-- mengubah kota dan alamat
-- mengubah nama pemilik dan nomor WhatsApp
-- menulis catatan bisnis
-- mengatur ambang notifikasi stok menipis
-- memilih metode pembayaran yang aktif di kasir
-- me-reset workspace ke kondisi awal
-
-Perilaku reset workspace:
-
-- menghapus transaksi, detail transaksi, hutang, pengeluaran, produk, dan profil warung milik user
-- membuat ulang workspace default untuk user yang sama
-
-## 8. Alur Pengguna Utama
-### 8.1 Daftar dan mulai memakai aplikasi
-1. Pengguna membuka halaman autentikasi.
-2. Pengguna mendaftar akun baru atau login.
-3. Setelah berhasil, pengguna diarahkan ke dashboard.
-4. Backend memastikan user memiliki workspace warung.
-5. Aplikasi memuat seluruh state awal dari API bootstrap.
-
-### 8.2 Menjual barang dari kasir
-1. Pengguna membuka halaman kasir.
-2. Pengguna mencari atau memilih produk dari katalog.
-3. Produk ditambahkan ke keranjang.
-4. Pengguna mengatur quantity bila perlu.
-5. Pengguna memilih metode pembayaran.
-6. Pengguna menekan checkout.
-7. Sistem menyimpan transaksi dan mengurangi stok.
-8. UI menampilkan notifikasi sukses dan memperbarui data stok.
-
-### 8.3 Menambah atau restock produk
-1. Pengguna membuka halaman inventaris.
-2. Pengguna menambah produk baru atau membuka mode edit.
-3. Pengguna menyimpan perubahan.
-4. Bila stok ingin ditambah, pengguna menjalankan aksi restock.
-5. Sistem memperbarui stok dan menampilkan data terbaru.
-
-### 8.4 Mencatat dan menagih kasbon
-1. Pengguna membuka halaman buku hutang.
-2. Pengguna menambah catatan hutang baru.
-3. Saat ingin follow-up, pengguna menekan tombol kirim pengingat.
-4. Sistem menandai waktu pengingat terakhir.
-5. Saat pembayaran diterima, pengguna menandai hutang sebagai lunas.
-
-### 8.5 Mengecek performa usaha
-1. Pengguna membuka halaman laporan.
-2. Pengguna memilih periode harian, mingguan, atau bulanan.
-3. Sistem menghitung metrik usaha dari data transaksi dan pengeluaran.
-4. Pengguna membaca preview layout PDF.
-5. Pengguna belum bisa mengekspor PDF final karena fitur masih placeholder.
-
-## 9. Kebutuhan Fungsional
-### 9.1 Akun dan akses
-- Sistem harus mendukung sign up dan sign in berbasis email + password.
-- Sistem harus memisahkan data berdasarkan `userId`.
-- Sistem harus menolak akses API ketika sesi tidak valid.
-
-### 9.2 Manajemen produk
-- Sistem harus bisa membuat produk baru.
-- Sistem harus bisa memperbarui produk existing.
-- Sistem harus bisa menambah stok produk.
-- Sistem harus menyimpan harga beli dan harga jual untuk perhitungan laporan.
-
-### 9.3 Transaksi
-- Sistem harus menolak checkout jika keranjang kosong.
-- Sistem harus menolak checkout jika stok tidak cukup.
-- Sistem harus menyimpan transaksi dan item transaksi secara konsisten.
-- Sistem harus mengurangi stok produk setelah transaksi sukses.
-
-### 9.4 Buku hutang
-- Sistem harus bisa menyimpan hutang baru.
-- Sistem harus bisa menandai hutang sebagai lunas.
-- Sistem harus bisa menandai waktu pengingat terakhir.
-
-### 9.5 Laporan
-- Sistem harus menghitung omzet, HPP, pengeluaran, laba kotor, laba bersih, dan rata-rata tiket.
-- Sistem harus mendukung agregasi data untuk range harian, mingguan, dan bulanan.
-
-### 9.6 Pengaturan
-- Sistem harus menyimpan profil warung per user.
-- Sistem harus menyimpan daftar metode pembayaran aktif.
-- Sistem harus menyimpan ambang alert stok menipis.
-- Sistem harus bisa melakukan reset workspace user.
-
-## 10. Kebutuhan Non-Fungsional
-- UI harus mudah dipakai pada layar sentuh dan ukuran tablet.
-- Respons operasional harus terasa cepat untuk alur kasir.
-- API route harus berjalan di runtime Node.js karena bergantung pada akses database dan auth server-side.
-- Data penting harus tersimpan di PostgreSQL, bukan hanya di state frontend.
-- Aplikasi harus tetap bisa dijalankan secara lokal dengan konfigurasi Postgres sederhana.
-
-## 11. Model Data Produk
-### Entitas utama
-- `store_profiles`
-- `products`
-- `transactions`
-- `transaction_items`
-- `debts`
-- `expenses`
-
-### Relasi utama
-- satu user memiliki satu profil warung
-- satu user memiliki banyak produk
-- satu user memiliki banyak transaksi
-- satu transaksi memiliki banyak item transaksi
-- satu user memiliki banyak hutang
-- satu user memiliki banyak pengeluaran
-
-### Catatan penting model data
-- `enabledPayments` disimpan sebagai `jsonb`
-- status lunas hutang disimpan sebagai integer `0/1`
-- semua timestamp utama disimpan sebagai `timestamptz`
-
-## 12. API Produk Saat Ini
-API internal yang sudah tersedia:
-
-- `GET /api/bootstrap`
-- `POST /api/bootstrap/reset`
-- `POST /api/transactions`
-- `POST /api/products`
-- `PATCH /api/products/:id`
-- `POST /api/products/:id/restock`
-- `POST /api/debts`
-- `PATCH /api/debts/:id`
-- `POST /api/debts/:id/remind`
-- `PUT /api/settings`
-- `ALL /api/auth/[...all]` untuk Better Auth
-
-API ini dipakai langsung oleh frontend melalui provider state aplikasi.
-
-## 13. Batasan Produk Saat Ini
-- belum ada integrasi WhatsApp provider asli
-- belum ada CRUD pengeluaran dari UI
-- belum ada export PDF sungguhan
-- belum ada delete produk atau delete hutang
-- belum ada diskon, pajak, voucher, atau split payment
-- belum ada role admin/kasir atau multi-user per warung
-- belum ada mode offline
-- belum ada stok opname, supplier, atau pembelian stok
-
-## 14. Risiko Produk
-- tanpa mode offline, warung bergantung pada koneksi saat bertransaksi
-- tanpa pengeluaran dari UI, akurasi laporan laba bersih masih bergantung pada seed atau input backend
-- tanpa WhatsApp sungguhan, value proposition pengingat hutang dan stok belum sepenuhnya tercapai
-- tanpa delete flow, koreksi data masih terbatas pada update dan reset workspace
-
-## 15. Prioritas Pengembangan Berikutnya
-Prioritas yang paling logis setelah rilis saat ini:
-
-1. Tambah CRUD pengeluaran dari UI agar laporan laba bersih benar-benar operasional.
-2. Implementasikan export PDF atau print-ready flow sungguhan.
-3. Integrasikan provider WhatsApp untuk pengingat hutang dan notifikasi stok.
-4. Tambahkan seed/onboarding produk awal agar user baru tidak mulai dari layar kosong.
-5. Tambahkan delete/archive untuk produk dan hutang.
-6. Tambahkan metrik laporan yang lebih lengkap, termasuk performa per metode pembayaran dan produk.
-
-## 16. Definisi Sukses
-Versi produk saat ini dapat dianggap berhasil bila:
-
-- pengguna bisa membuat akun dan masuk tanpa hambatan
-- pengguna bisa menambah produk, menjual produk, dan melihat stok berkurang
-- pengguna bisa mencatat kasbon dan menandai pelunasan
-- pengguna bisa menyimpan profil warung dan melihat perubahan tercermin di UI
-- pengguna bisa membaca laporan dasar dari data transaksi yang sudah tersimpan
-
-## 17. Ringkasan Status
-Warung OS sudah berada pada tahap MVP fungsional untuk alur inti kasir, inventaris, hutang, pengaturan, dan pembacaan laporan dasar. Fondasi backend, auth, dan persistence sudah aktif. Nilai produk sudah terlihat jelas, tetapi beberapa fitur bernilai tinggi seperti input pengeluaran, export PDF, dan WhatsApp real integration masih berada pada tahap placeholder atau belum tersedia di UI.
+# PRD — Project Requirements Document
+
+## 1. Overview
+**Warung OS** adalah aplikasi berbasis web yang dirancang khusus untuk menggantikan buku catatan manual dan kalkulator bagi pemilik UMKM di Indonesia (seperti warung makan, toko kelontong, dan usaha rumahan). 
+
+Banyak UMKM yang saat ini mengalami "kebutaan finansial" (uang pribadi dan usaha tercampur), menebak-nebak jumlah stok barang, dan tidak memiliki catatan keuangan yang rapi untuk mengajukan pinjaman modal (seperti KUR). Warung OS hadir untuk menyelesaikan masalah tersebut dalam satu wadah yang sangat mudah digunakan, mencakup pencatatan penjualan, pembukuan dasar, manajemen stok, hingga pencatatan hutang pelanggan (kasbon).
+
+## 2. Requirements
+- **Platform Utama:** Aplikasi Web (Web App), dioptimalkan secara khusus untuk tampilan **Tablet** (kasir warung).
+- **Konektivitas:** Berjalan secara *Online* (membutuhkan koneksi internet).
+- **Fokus Inventaris:** Hanya melacak barang jadi (*finished goods*), tidak melacak bahan baku.
+- **Model Bisnis:** Gratis dasar (*Freemium* / Basic Free) untuk menjaring pengguna baru.
+- **Adopsi & Kemudahan:** Transaksi harus bisa diselesaikan di bawah 5 detik murni dengan sentuhan jari (*tap*).
+- **Integrasi Eksternal:** Membutuhkan integrasi dengan WhatsApp API untuk mengirim notifikasi stok menipis dan pengingat hutang.
+
+## 3. Core Features
+Berikut adalah fitur-fitur MVP (Minimum Viable Product) yang paling penting untuk dibangun pada tahap pertama:
+
+1. **Tap-to-Sell POS (Kasir Cepat)**
+   - Layar kasir visual dengan ikon produk. Pengguna hanya perlu *tap* produk untuk memasukkan ke keranjang.
+   - Pilihan metode pembayaran yang simpel: Tunai (Cash), QRIS, atau Transfer Bank.
+   - Setiap penjualan secara otomatis akan memotong jumlah stok barang dan masuk ke pembukuan.
+
+2. **Buku Hutang (Tracker Kasbon)** 
+   - *Fitur andalan untuk menarik pengguna.* Pemilik dapat mencatat pelanggan yang berhutang (kasbon).
+   - Menyimpan data: Nama Peminjam, Nomor WhatsApp, dan Jumlah Hutang.
+   - Fitur 1-klik untuk mengirim pesan pengingat tagihan yang sopan via WhatsApp secara otomatis.
+
+3. **Pembukuan Otomatis & Laporan PDF**
+   - Laporan Laba/Rugi (Income vs Expense) yang sangat sederhana dengan bahasa sehari-hari.
+   - Menampilkan metrik keuntungan Harian, Mingguan, dan Bulanan.
+   - Punya tombol "Cetak PDF" untuk mengunduh laporan keuangan dasar yang bisa dipakai sebagai syarat pengajuan pinjaman KUR.
+
+4. **Inventaris & Notifikasi Stok Menipis**
+   - Menu manajemen produk (Nama barang, Harga beli, Harga jual, Sisa stok).
+   - Pengurangan stok otomatis setiap ada transaksi sukses. Input restok/tambah barang dilakukan manual.
+   - Peringatan via pesan WhatsApp ke nomor pemilik warung saat stok barang tertentu hampir habis.
+
+## 4. User Flow
+Berikut adalah perjalanan sederhana yang akan dialami oleh pengguna:
+1. **Daftar & Pengaturan:** Pengguna mendaftar secara gratis, lalu memasukkan daftar barang dagangan beserta harga dan jumlah stok saat ini (via Tablet).
+2. **Transaksi Penjualan:** Pelanggan datang membeli barang. Pemilik *tap* ikon barang di aplikasi, memilih metode bayar (misal: QRIS), dan klik "Selesai" (kurang dari 5 detik).
+3. **Mencatat Kasbon:** Ada pelanggan langganan ingin berhutang. Pemilik membuka menu "Buku Hutang", memasukkan nama, nomor WA, dan nominal, lalu menyimpannya.
+4. **Kirim Pengingat:** Saat jatuh tempo, pemilik membuka "Buku Hutang" dan menekan tombol kirim pesan. Pesan WA otomatis terkirim ke pelanggan bersangkutan.
+5. **Cek Keuntungan:** Pemilik membuka "Laporan" untuk melihat untung bersih hari ini dan mengunduh PDF jika besok ingin ke bank mengajukan pinjaman.
+
+## 5. Architecture
+Aplikasi ini menggunakan arsitektur monolitik modern yang berjalan di atas Cloud, dengan antarmuka yang membaca data secara langsung dari database dan terhubung ke layanan pihak ketiga (WhatsApp API).
+
+```mermaid
+flowchart TD
+    A[Pengguna / Pemilik Warung\nTablet Browser] -->|Akses Aplikasi web| B(Frontend Web\nUser Interface)
+    B <-->|Kirim/Ambil Data Transaksi| C{Backend API\nLogika Bisnis}
+    
+    C <--> D[(Database\nSimpan Data UMKM)]
+    
+    C -->|Trigger Pesan WA| E[WhatsApp API Provider]
+    E -->|Kirim Pesan| F[Pelanggan / Pemilik Warung\nAplikasi WhatsApp]
+```
+
+## 6. Sequence Diagram
+Bagian ini menjelaskan aliran data teknis secara detail saat terjadi interaksi utama, yaitu Transaksi Penjualan dan Pencatatan Hutang. Diagram ini melibatkan aktor pemilik, frontend, backend, database, dan layanan WhatsApp API.
+
+```mermaid
+sequenceDiagram
+    participant P as Pemilik (Tablet)
+    participant FE as Frontend Web
+    participant BE as Backend API
+    participant DB as Database
+    participant WA as WhatsApp API
+
+    Note over P, WA: Skenario 1: Transaksi Penjualan
+    P->>FE: Tap Produk & Pilih Metode Bayar
+    FE->>BE: POST /api/transactions
+    BE->>DB: Begin Transaction
+    DB->>DB: Simpan Transaksi & Detail Item
+    DB->>DB: Update Stok Produk (Reduce)
+    DB->>BE: Commit Success
+    BE->>DB: Cek Stok Minimum (Threshold)
+    alt Stok Menipis
+        BE->>WA: Trigger Notifikasi Stok
+        WA->>P: Kirim WA Peringatan Stok
+    end
+    BE->>FE: Response Success (200 OK)
+    FE->>P: Tampilkan Struk & Kembali ke Kasir
+
+    Note over P, WA: Skenario 2: Pencatatan Hutang (Kasbon)
+    P->>FE: Input Data Peminjam & Nominal
+    FE->>BE: POST /api/debts
+    BE->>DB: Simpan Data Hutang
+    DB->>BE: Confirm Saved
+    BE->>WA: Trigger WA Pengingat (Saat Jatuh Tempo/Manual)
+    WA->>Pessenger: Kirim WA Tagihan ke Pelanggan
+    BE->>FE: Response Success
+    FE->>P: Tampilkan Status Hutang Tersimpan
+```
+
+## 7. Database Schema
+Sistem membutuhkan beberapa tabel utama untuk mengatur operasional warung. Berikut adalah skema database secara high-level:
+
+**Tabel Penjelasan:**
+- **Users (Pemilik):** `id`, `nama_warung`, `no_wa_pemilik`, `email`
+- **Products (Produk):** `id`, `user_id`, `nama_barang`, `harga_beli`, `harga_jual`, `stok_saat_ini`, `stok_minimum`
+- **Transactions (Transaksi):** `id`, `user_id`, `total_harga`, `metode_bayar` (Tunai/QRIS), `tanggal`
+- **Transaction_Items (Detail Barang):** `id`, `transaction_id`, `product_id`, `jumlah_beli`, `harga_satuan`
+- **Debts (Hutang):** `id`, `user_id`, `nama_peminjam`, `no_wa_peminjam`, `jumlah_hutang`, `status_lunas` (Ya/Tidak), `tanggal`
+- **Expenses (Pengeluaran):** `id`, `user_id`, `keterangan_pengeluaran`, `jumlah_uang`, `tanggal`
+
+```mermaid
+erDiagram
+    USERS ||--o{ PRODUCTS : "memiliki"
+    USERS ||--o{ TRANSACTIONS : "mencatat"
+    USERS ||--o{ DEBTS : "mencatat"
+    USERS ||--o{ EXPENSES : "mengeluarkan"
+    
+    TRANSACTIONS ||--|{ TRANSACTION_ITEMS : "terdiri dari"
+    PRODUCTS ||--o{ TRANSACTION_ITEMS : "tercatat dalam"
+
+    USERS {
+        string id PK
+        string nama_warung
+        string no_wa_pemilik
+    }
+    PRODUCTS {
+        string id PK
+        string user_id FK
+        string nama_barang
+        int harga_beli
+        int harga_jual
+        int stok_saat_ini
+        int stok_minimum
+    }
+    TRANSACTIONS {
+        string id PK
+        string user_id FK
+        int total_harga
+        string metode_bayar
+        datetime tanggal
+    }
+    TRANSACTION_ITEMS {
+        string id PK
+        string transaction_id FK
+        string product_id FK
+        int jumlah_beli
+        int harga_satuan
+    }
+    DEBTS {
+        string id PK
+        string user_id FK
+        string nama_peminjam
+        string no_wa_peminjam
+        int jumlah_hutang
+        boolean status_lunas
+    }
+    EXPENSES {
+        string id PK
+        string user_id FK
+        string keterangan
+        int jumlah_uang
+    }
+```
+
+## 8. Tech Stack
+Berdasarkan kebutuhan kecepatan pengembangan (MVP), stabilitas, dan performa web app, berikut adalah rekomendasi tumpukan teknologi (Tech Stack) yang akan digunakan:
+
+- **Frontend / Aplikasi UI:** Web framework **Next.js** (berbasis React). Paling optimal untuk web app modern.
+- **Styling & Komponen:** **Tailwind CSS** dipadukan dengan **shadcn/ui** untuk membuat tampilan dashboard kasir tablet yang rapi, cepat, dan modern.
+- **Backend / API:** Menjadi satu di dalam **Next.js (App Router API)** agar proses *development* lebih cepat tanpa perlu memisahkan server.
+- **Database:** **SQLite** — Sangat mumpuni, ringan, dan murah untuk level MVP yang belum membutuhkan database besar/kompleks.
+- **ORM (Penghubung Database):** **Drizzle ORM** — Modern, cepat, dan sangat aman digunakan dengan TypeScript.
+- **Autentikasi:** **Better Auth** — Layanan autentikasi *open-source* yang aman, mudah, dan gratis untuk login pengguna.
+- **Integrasi Ke-3 (WhatsApp):** Menggunakan pihak ketiga seperti **Fonnte**, **Wablas**, atau **Twilio** untuk otomatisasi kirim pesan WA tanpa perlu mengelola server WA sendiri.
+- **AI & LLM Integration:** Layanan AI didukung oleh model bahasa besar seperti **OpenAI (GPT-4o-mini)** atau **Google Gemini** via API. Digunakan untuk menjalankan fitur asisten pintar dan analisis data kontekstual.
+
+## 9. Artificial Intelligence Integration
+Fitur ini memperkenalkan **WarungOS AI Assistant**, sebuah asisten virtual kontekstual yang dirancang untuk memungkinkan pemilik UMKM mengelola usaha secara intuitif tanpa perlu menelusuri menu atau dashboard secara manual.
+
+### 9.1. Antarmuka & Aksesibilitas (UI/UX)
+- **Lokasi UI:** Sidebar kanan yang dapat dibuka/tutup (*collapsible*), selalu menempel di pojok kanan layar aplikasi.
+- **Akses Global:** Dapat dipanggil dari halaman mana pun (Kasir, Inventaris, Hutang, Laporan, dll.) tanpa mengganggu alur kerja utama atau menutupi area kerja kasir.
+- **Modalitas Interaksi:** Mendukung input teks dan perintah suara (*voice-to-text*). Desain antarmuka menggunakan *bubble chat* sederhana yang responsif terhadap layar tablet ukuran kecil hingga menengah.
+
+### 9.2. Kapabilitas Utama
+1. **Tanya Jawab Data Bisnis (RAG - Retrieval Augmented Generation):**
+   AI dapat menjawab pertanyaan spesifik berdasarkan data operasional warung yang sebenarnya. Sistem akan mengambil konteks lokal sebelum merespons.
+   - *Contoh:* "Berapa sisa stok minyak goreng sekarang?", "Total pemasukan bersih minggu ini berapa?", atau "Siapa daftar pelanggan yang hutangnya belum lunas?"
+2. **Saran Optimasi Bisnis & Prediksi:**
+   AI menganalisis tren historis dan memberikan rekomendasi proaktif untuk membantu pengambilan keputusan finansial dan inventaris.
+   - *Contoh:* "Stok beras cenderung habis dalam 2 hari ke depan, disarankan untuk melakukan restok.", "Penjualan kopi meningkat 25% pada jam 7-9 pagi, pertimbangkan untuk menambahkan varian cup besar.", atau "Pembelian listrik bulan ini naik 15%, apakah ada peralatan baru yang ditambahkan?"
+3. **Eksekusi Perintah Cepat (Action & Navigation):**
+   AI tidak hanya menjawab, tetapi juga dapat memicu tindakan sederhana di dalam aplikasi melalui perintah teks atau suara.
+   - *Contoh:* "Buka halaman Laporan Harian", "Catat pengeluaran beli es balok 50 ribu", atau "Buka form kasbon untuk Pak Budi lalu isi nominal 200 ribu."
+
+### 9.3. Implementasi Teknis & Keamanan
+- **Arsitektur RAG:** Data tabel `Transactions`, `Products`, `Debts`, dan `Expenses` akan secara berkala di-*chunk* dan di-*embed* menjadi vector. Vektor ini disimpan di lapisan cache atau vector store ringan. Saat user bertanya, sistem melakukan semantic search untuk mengambil potongan data relevan, lalu menggabungkannya ke dalam prompt sebelum dikirim ke LLM.
+- **Penyampaian Prompt & Konteks:** Setiap permintaan AI akan di-*prepend* dengan konteks `user_id`, periode waktu default (hari ini/bulan ini), dan aturan bisnis lokal sebelum masuk ke endpoint LLM.
+- **Validasi Aksi:** Untuk perintah eksekusi (seperti mencatat hutang atau membuka halaman), AI hanya akan menghasilkan payload/intent yang diverifikasi oleh frontend/backend. AI tidak memiliki akses tulis langsung (`write-access`) ke database untuk mencegah kesalahan atau perubahan data yang tidak sah.
+- **Privasi & Kepatuhan:** Data sensitif di-*anonymize* atau di-*mask* sebelum dikirim ke provider AI eksternal. Sistem hanya mengirim metadata yang diperlukan untuk query. Respons AI dilogging secara lokal untuk audit dan peningkatan prompt (`prompt tuning`) secara berkala.

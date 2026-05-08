@@ -18,7 +18,7 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        "border-white/60 shadow-[0_20px_60px_-36px_rgba(65,35,18,0.45)]",
+        "border-border/60 shadow-[0_20px_60px_-36px_rgba(65,35,18,0.45)]",
         tone === "accent" && "bg-accent text-accent-foreground",
         tone === "warn" && "bg-primary text-primary-foreground"
       )}

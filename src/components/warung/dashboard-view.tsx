@@ -54,7 +54,7 @@ export function DashboardView() {
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader>
             <CardTitle className="font-heading text-2xl">Aktivitas terbaru</CardTitle>
             <CardDescription>
@@ -99,7 +99,7 @@ export function DashboardView() {
               )}
             </div>
 
-            <div className="rounded-[26px] border border-border/70 bg-white/82 p-5">
+            <div className="rounded-[26px] border border-border/70 bg-card/82 p-5">
               <div className="flex items-center gap-2">
                 <ArrowRightLeft className="size-4 text-primary" />
                 <p className="font-medium">Timeline transaksi</p>
@@ -127,7 +127,7 @@ export function DashboardView() {
         </Card>
 
         <div className="space-y-4">
-          <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+          <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
             <CardHeader>
               <CardTitle className="font-heading text-2xl">Stok perlu perhatian</CardTitle>
               <CardDescription>
@@ -139,7 +139,7 @@ export function DashboardView() {
                 lowStockProducts.slice(0, 5).map((product) => (
                   <div
                     key={product.id}
-                    className="flex items-center justify-between rounded-[20px] border border-border/70 bg-white/80 px-4 py-3"
+                    className="flex items-center justify-between rounded-[20px] border border-border/70 bg-card/80 px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/12 text-primary">
@@ -163,7 +163,7 @@ export function DashboardView() {
             </CardContent>
           </Card>
 
-          <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+          <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
             <CardHeader>
               <CardTitle className="font-heading text-2xl">Kasbon terbaru</CardTitle>
               <CardDescription>
@@ -174,7 +174,7 @@ export function DashboardView() {
               {latestDebts.map((debt) => (
                 <div
                   key={debt.id}
-                  className="flex items-start justify-between gap-3 rounded-[20px] border border-border/70 bg-white/80 px-4 py-3"
+                  className="flex items-start justify-between gap-3 rounded-[20px] border border-border/70 bg-card/80 px-4 py-3"
                 >
                   <div>
                     <div className="flex items-center gap-2">
@@ -194,7 +194,7 @@ export function DashboardView() {
             </CardContent>
           </Card>
 
-          <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+          <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
             <CardContent className="flex items-center justify-between gap-4 p-5">
               <div>
                 <p className="text-sm text-muted-foreground">SKU aktif</p>

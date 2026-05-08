@@ -97,7 +97,7 @@ export function BukuHutangView() {
         />
       </section>
 
-      <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+      <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
         <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <CardTitle className="font-heading text-2xl">Buku hutang pelanggan</CardTitle>
@@ -113,7 +113,7 @@ export function BukuHutangView() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Cari nama atau no. WhatsApp"
-                className="h-11 rounded-2xl bg-white/85 pl-9"
+                className="h-11 rounded-2xl bg-card/85 pl-9"
               />
             </div>
 
@@ -201,7 +201,7 @@ export function BukuHutangView() {
 
           <div className="grid gap-4 lg:grid-cols-2">
             {filteredDebts.map((debt) => (
-              <Card key={debt.id} className="rounded-[26px] border border-border/70 bg-white/78">
+              <Card key={debt.id} className="rounded-[26px] border border-border/70 bg-card/78">
                 <CardContent className="space-y-4 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -230,7 +230,7 @@ export function BukuHutangView() {
                     </div>
                   </div>
 
-                  <div className="rounded-[20px] border border-border/70 bg-white/75 p-4 text-sm text-muted-foreground">
+                  <div className="rounded-[20px] border border-border/70 bg-card/75 p-4 text-sm text-muted-foreground">
                     <p>Dicatat: {formatDateTime(debt.createdAt)}</p>
                     <p className="mt-1">
                       Pengingat terakhir:{" "}

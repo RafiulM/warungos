@@ -53,7 +53,7 @@ export function LaporanView() {
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <CardTitle className="font-heading text-2xl">Ringkasan performa</CardTitle>
@@ -77,7 +77,7 @@ export function LaporanView() {
             </Tabs>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="rounded-[26px] border border-border/70 bg-white/80 p-5">
+            <div className="rounded-[26px] border border-border/70 bg-card/80 p-5">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Tren omzet</p>
@@ -111,7 +111,7 @@ export function LaporanView() {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-[26px] border border-border/70 bg-white/80 p-5">
+              <div className="rounded-[26px] border border-border/70 bg-card/80 p-5">
                 <p className="text-sm text-muted-foreground">Rata-rata tiket</p>
                 <p className="mt-2 font-heading text-3xl font-semibold">
                   {formatCurrency(summary.averageTicket)}
@@ -121,7 +121,7 @@ export function LaporanView() {
                 </p>
               </div>
 
-              <div className="rounded-[26px] border border-border/70 bg-white/80 p-5">
+              <div className="rounded-[26px] border border-border/70 bg-card/80 p-5">
                 <p className="text-sm text-muted-foreground">Produk paling bergerak</p>
                 <div className="mt-4 space-y-3">
                   {topVelocity.map((item) => (
@@ -136,7 +136,7 @@ export function LaporanView() {
           </CardContent>
         </Card>
 
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="font-heading text-2xl">Preview laporan PDF</CardTitle>
@@ -192,19 +192,19 @@ export function LaporanView() {
               </div>
 
               <div className="grid gap-4 border-b border-dashed border-border/80 py-5 sm:grid-cols-2">
-                <div className="rounded-[22px] bg-white p-4 ring-1 ring-border/70">
+                <div className="rounded-[22px] bg-card p-4 ring-1 ring-border/70">
                   <p className="text-sm text-muted-foreground">Omzet</p>
                   <p className="mt-2 text-2xl font-semibold">{formatCurrency(summary.revenue)}</p>
                 </div>
-                <div className="rounded-[22px] bg-white p-4 ring-1 ring-border/70">
+                <div className="rounded-[22px] bg-card p-4 ring-1 ring-border/70">
                   <p className="text-sm text-muted-foreground">Pengeluaran</p>
                   <p className="mt-2 text-2xl font-semibold">{formatCurrency(summary.expenseTotal)}</p>
                 </div>
-                <div className="rounded-[22px] bg-white p-4 ring-1 ring-border/70">
+                <div className="rounded-[22px] bg-card p-4 ring-1 ring-border/70">
                   <p className="text-sm text-muted-foreground">Laba kotor</p>
                   <p className="mt-2 text-2xl font-semibold">{formatCurrency(summary.grossProfit)}</p>
                 </div>
-                <div className="rounded-[22px] bg-white p-4 ring-1 ring-border/70">
+                <div className="rounded-[22px] bg-card p-4 ring-1 ring-border/70">
                   <p className="text-sm text-muted-foreground">Rata-rata transaksi</p>
                   <p className="mt-2 text-2xl font-semibold">{formatCurrency(summary.averageTicket)}</p>
                 </div>
@@ -216,13 +216,13 @@ export function LaporanView() {
                   Catatan untuk pemilik warung
                 </div>
                 <ul className="space-y-3 text-sm text-muted-foreground">
-                  <li className="rounded-[18px] bg-white px-4 py-3 ring-1 ring-border/70">
+                  <li className="rounded-[18px] bg-card px-4 py-3 ring-1 ring-border/70">
                     Laba bersih periode {rangeLabel.toLowerCase()} tercatat {formatCurrency(summary.netProfit)}.
                   </li>
-                  <li className="rounded-[18px] bg-white px-4 py-3 ring-1 ring-border/70">
+                  <li className="rounded-[18px] bg-card px-4 py-3 ring-1 ring-border/70">
                     Produk paling sering bergerak: {topVelocity.map((item) => item.name).join(", ")}.
                   </li>
-                  <li className="rounded-[18px] bg-white px-4 py-3 ring-1 ring-border/70">
+                  <li className="rounded-[18px] bg-card px-4 py-3 ring-1 ring-border/70">
                     Data ini masih mock frontend, namun layout dan struktur metrik sudah siap dipakai saat API aktif.
                   </li>
                 </ul>

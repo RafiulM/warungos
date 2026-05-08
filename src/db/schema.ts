@@ -68,3 +68,25 @@ export const expenses = pgTable("expenses", {
   createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull(),
   category: text("category").notNull(),
 });
+
+export const aiChats = pgTable("ai_chats", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  title: text("title").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }).notNull(),
+});
+
+export const aiMessages = pgTable("ai_messages", {
+  id: text("id").primaryKey(),
+  chatId: text("chat_id").notNull(),
+  userId: text("user_id").notNull(),
+  role: text("role").notNull(),
+  content: text("content").notNull(),
+  toolName: text("tool_name"),
+  toolCallId: text("tool_call_id"),
+  toolCalls: jsonb("tool_calls").$type<unknown>(),
+  toolArgs: jsonb("tool_args").$type<unknown>(),
+  toolResult: jsonb("tool_result").$type<unknown>(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull(),
+});

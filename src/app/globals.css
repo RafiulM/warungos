@@ -135,8 +135,19 @@
     min-height: 100vh;
   }
 
+  .dark body {
+    background-image:
+      radial-gradient(circle at top left, rgba(255, 189, 123, 0.18), transparent 28%),
+      radial-gradient(circle at top right, rgba(144, 177, 111, 0.10), transparent 26%),
+      linear-gradient(180deg, #1c120e 0%, #2c1d18 42%, #20140f 100%);
+  }
+
   ::selection {
     background: rgba(186, 92, 35, 0.18);
+  }
+
+  .dark ::selection {
+    background: rgba(255, 189, 123, 0.28);
   }
 }
 
@@ -144,5 +155,9 @@
   .glass-panel {
     background: rgba(255, 250, 243, 0.72);
     backdrop-filter: blur(16px);
+  }
+
+  .dark .glass-panel {
+    background: rgba(44, 29, 24, 0.72);
   }
 }

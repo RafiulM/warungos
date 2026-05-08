@@ -68,7 +68,7 @@ function ProductForm({
             value={draft.category}
             onValueChange={(value) => onChange({ ...draft, category: value as ProductCategory })}
           >
-            <SelectTrigger className="h-11 w-full rounded-2xl bg-white">
+            <SelectTrigger className="h-11 w-full rounded-2xl bg-card">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -246,7 +246,7 @@ export function InventarisView() {
         />
       </section>
 
-      <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+      <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
         <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <CardTitle className="font-heading text-2xl">Inventaris barang jadi</CardTitle>
@@ -262,7 +262,7 @@ export function InventarisView() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Cari nama, kategori, atau catatan"
-                className="h-11 rounded-2xl bg-white/85 pl-9"
+                className="h-11 rounded-2xl bg-card/85 pl-9"
               />
             </div>
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -400,7 +400,7 @@ export function InventarisView() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 p-6 pt-4">
-            <div className="rounded-[22px] border border-border/70 bg-white/75 p-4">
+            <div className="rounded-[22px] border border-border/70 bg-card/75 p-4">
               <p className="text-sm text-muted-foreground">Stok sekarang</p>
               <p className="mt-2 font-heading text-3xl font-semibold">
                 {restockTarget?.stock ?? 0} pcs

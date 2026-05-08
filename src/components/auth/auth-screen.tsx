@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 type AuthMode = "signin" | "signup";
@@ -40,7 +41,10 @@ export function AuthScreen() {
   }, [queryMode]);
 
   return (
-    <div className="min-h-screen bg-background px-4 py-6 lg:px-6">
+    <div className="relative min-h-screen bg-background px-4 py-6 lg:px-6">
+      <div className="absolute top-4 right-4 z-10 lg:top-6 lg:right-6">
+        <ThemeToggle variant="default" className="bg-card/85 shadow-sm backdrop-blur" />
+      </div>
       <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-[1440px] gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <Card className="relative overflow-hidden border-white/60 bg-[linear-gradient(145deg,rgba(58,34,24,0.98),rgba(103,59,34,0.96))] text-white shadow-[0_32px_90px_-50px_rgba(56,31,19,0.88)]">
           <CardContent className="flex h-full flex-col justify-between gap-10 p-8 lg:p-10">
@@ -87,7 +91,7 @@ export function AuthScreen() {
           </CardContent>
         </Card>
 
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/85 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader className="pb-2">
             <CardTitle className="font-heading text-3xl">Akses akun</CardTitle>
             <CardDescription>
@@ -101,7 +105,7 @@ export function AuthScreen() {
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-medium transition-colors",
                   mode === "signin"
-                    ? "bg-background text-foreground shadow-sm"
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-border/70"
                     : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setMode("signin")}
@@ -113,7 +117,7 @@ export function AuthScreen() {
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-medium transition-colors",
                   mode === "signup"
-                    ? "bg-background text-foreground shadow-sm"
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-border/70"
                     : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setMode("signup")}
@@ -143,7 +147,7 @@ export function AuthScreen() {
                       setSignInForm((current) => ({ ...current, email: event.target.value }))
                     }
                     autoComplete="email"
-                    className="h-12 rounded-2xl bg-white/80"
+                    className="h-12 rounded-2xl bg-card/80"
                     placeholder="warung@email.com"
                     required
                   />
@@ -160,7 +164,7 @@ export function AuthScreen() {
                       setSignInForm((current) => ({ ...current, password: event.target.value }))
                     }
                     autoComplete="current-password"
-                    className="h-12 rounded-2xl bg-white/80"
+                    className="h-12 rounded-2xl bg-card/80"
                     placeholder="Minimal 8 karakter"
                     required
                   />
@@ -192,7 +196,7 @@ export function AuthScreen() {
                       setSignUpForm((current) => ({ ...current, name: event.target.value }))
                     }
                     autoComplete="name"
-                    className="h-12 rounded-2xl bg-white/80"
+                    className="h-12 rounded-2xl bg-card/80"
                     placeholder="Ibu Sari"
                     required
                   />
@@ -209,7 +213,7 @@ export function AuthScreen() {
                       setSignUpForm((current) => ({ ...current, email: event.target.value }))
                     }
                     autoComplete="email"
-                    className="h-12 rounded-2xl bg-white/80"
+                    className="h-12 rounded-2xl bg-card/80"
                     placeholder="warung@email.com"
                     required
                   />
@@ -226,7 +230,7 @@ export function AuthScreen() {
                       setSignUpForm((current) => ({ ...current, password: event.target.value }))
                     }
                     autoComplete="new-password"
-                    className="h-12 rounded-2xl bg-white/80"
+                    className="h-12 rounded-2xl bg-card/80"
                     placeholder="Minimal 8 karakter"
                     minLength={8}
                     required

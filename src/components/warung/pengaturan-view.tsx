@@ -84,7 +84,7 @@ export function PengaturanView() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
-      <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+      <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -98,7 +98,7 @@ export function PengaturanView() {
                 "rounded-full px-4 py-2 text-sm font-medium",
                 hasUnsavedChanges
                   ? "bg-primary/12 text-primary"
-                  : "bg-emerald-50 text-emerald-700"
+                  : "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
               )}
             >
               {hasUnsavedChanges ? "Ada perubahan belum disimpan" : "Profil sudah sinkron"}
@@ -106,7 +106,7 @@ export function PengaturanView() {
           </div>
         </CardHeader>
         <CardContent className="grid gap-6">
-          <div className="rounded-[26px] border border-border/70 bg-white/85 p-5">
+          <div className="rounded-[26px] border border-border/70 bg-card/85 p-5">
             <div className="flex items-center gap-2">
               <Store className="size-4 text-primary" />
               <p className="font-medium">Identitas warung</p>
@@ -158,7 +158,7 @@ export function PengaturanView() {
             </div>
           </div>
 
-          <div className="rounded-[26px] border border-border/70 bg-white/85 p-5">
+          <div className="rounded-[26px] border border-border/70 bg-card/85 p-5">
             <div className="flex items-center gap-2">
               <MapPin className="size-4 text-primary" />
               <p className="font-medium">Pemilik & catatan bisnis</p>
@@ -200,7 +200,7 @@ export function PengaturanView() {
             </div>
           </div>
 
-          <div className="rounded-[26px] border border-border/70 bg-white/85 p-5">
+          <div className="rounded-[26px] border border-border/70 bg-card/85 p-5">
             <div className="flex items-center gap-2">
               <Bell className="size-4 text-primary" />
               <p className="font-medium">Batas notifikasi stok menipis</p>
@@ -225,7 +225,7 @@ export function PengaturanView() {
             </div>
           </div>
 
-          <div className="rounded-[26px] border border-border/70 bg-white/85 p-5">
+          <div className="rounded-[26px] border border-border/70 bg-card/85 p-5">
             <div className="flex items-center gap-2">
               <WalletCards className="size-4 text-primary" />
               <p className="font-medium">Metode bayar yang ditampilkan</p>
@@ -291,7 +291,7 @@ export function PengaturanView() {
       </Card>
 
       <div className="space-y-4">
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader>
             <CardTitle className="font-heading text-2xl">Preview identitas warung</CardTitle>
             <CardDescription>
@@ -318,11 +318,11 @@ export function PengaturanView() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[22px] border border-border/70 bg-white/85 p-4">
+              <div className="rounded-[22px] border border-border/70 bg-card/85 p-4">
                 <p className="text-sm text-muted-foreground">Produk aktif</p>
                 <p className="mt-2 font-heading text-3xl font-semibold">{products.length}</p>
               </div>
-              <div className="rounded-[22px] border border-border/70 bg-white/85 p-4">
+              <div className="rounded-[22px] border border-border/70 bg-card/85 p-4">
                 <p className="text-sm text-muted-foreground">Batas stok alert</p>
                 <p className="mt-2 font-heading text-3xl font-semibold">
                   {form.stockAlertThreshold || 0} pcs
@@ -330,14 +330,14 @@ export function PengaturanView() {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-border/70 bg-white/85 p-5">
+            <div className="rounded-[24px] border border-border/70 bg-card/85 p-5">
               <p className="text-sm text-muted-foreground">Catatan bisnis</p>
               <p className="mt-3 text-sm leading-6 text-foreground/80">
                 {form.businessNotes || "Belum ada catatan bisnis. Tambahkan info penting untuk operasional harian."}
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-border/70 bg-white/85 p-5">
+            <div className="rounded-[24px] border border-border/70 bg-card/85 p-5">
               <p className="text-sm text-muted-foreground">Metode pembayaran aktif</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {form.enabledPayments.map((method) => (
@@ -353,13 +353,13 @@ export function PengaturanView() {
           </CardContent>
         </Card>
 
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader>
             <CardTitle className="font-heading text-2xl">Acuan bisnis</CardTitle>
             <CardDescription>Contoh kasar valuasi stok aktif untuk kebutuhan diskusi internal.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="rounded-[26px] border border-border/70 bg-white/85 p-5">
+            <div className="rounded-[26px] border border-border/70 bg-card/85 p-5">
               <p className="text-sm text-muted-foreground">Estimasi modal stok berjalan</p>
               <p className="mt-3 font-heading text-4xl font-semibold">
                 {formatCurrency(

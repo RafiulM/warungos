@@ -117,6 +117,32 @@ async function ensureTables() {
 
     ALTER TABLE store_profiles
       ADD COLUMN IF NOT EXISTS business_notes text NOT NULL DEFAULT '';
+
+    CREATE TABLE IF NOT EXISTS ai_chats (
+      id text PRIMARY KEY,
+      user_id text NOT NULL,
+      title text NOT NULL,
+      created_at timestamptz NOT NULL,
+      updated_at timestamptz NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS ai_chats_user_idx ON ai_chats(user_id, updated_at DESC);
+
+    CREATE TABLE IF NOT EXISTS ai_messages (
+      id text PRIMARY KEY,
+      chat_id text NOT NULL,
+      user_id text NOT NULL,
+      role text NOT NULL,
+      content text NOT NULL,
+      tool_name text,
+      tool_call_id text,
+      tool_calls jsonb,
+      tool_args jsonb,
+      tool_result jsonb,
+      created_at timestamptz NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS ai_messages_chat_idx ON ai_messages(chat_id, created_at);
   `);
 }
 
@@ -560,6 +586,31 @@ export async function remindDebt(userId: string, debtId: string) {
     dueDate: updated.dueDate,
     isPaid: updated.isPaid === 1,
     lastReminderAt: updated.lastReminderAt ?? undefined,
+  };
+}
+
+export async function createExpense(
+  userId: string,
+  draft: { title: string; amount: number; category: "Operasional" | "Belanja" | "Utilitas" }
+) {
+  const [expense] = await db
+    .insert(expenses)
+    .values({
+      id: createId("exp"),
+      userId,
+      title: draft.title,
+      amount: draft.amount,
+      category: draft.category,
+      createdAt: nowIso(),
+    })
+    .returning();
+
+  return {
+    id: expense.id,
+    title: expense.title,
+    amount: expense.amount,
+    category: expense.category as "Operasional" | "Belanja" | "Utilitas",
+    createdAt: expense.createdAt,
   };
 }
 

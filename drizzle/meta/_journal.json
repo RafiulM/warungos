@@ -15,6 +15,20 @@
       "when": 1774691769633,
       "tag": "0001_better_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778231667182,
+      "tag": "0002_rich_thing",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778800000000,
+      "tag": "0003_ai_chat",
+      "breakpoints": true
     }
   ]
 }

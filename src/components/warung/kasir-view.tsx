@@ -58,7 +58,7 @@ function ProductCard({
       onClick={onAdd}
       disabled={product.stock <= 0}
       className={cn(
-        "group flex min-h-[164px] flex-col justify-between rounded-[26px] border border-white/65 bg-white/80 p-4 text-left shadow-[0_24px_50px_-36px_rgba(66,38,20,0.48)] transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_26px_60px_-34px_rgba(186,92,35,0.4)] disabled:cursor-not-allowed disabled:opacity-55",
+        "group flex min-h-[164px] flex-col justify-between rounded-[26px] border border-border/65 bg-card/80 p-4 text-left shadow-[0_24px_50px_-36px_rgba(66,38,20,0.48)] transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_26px_60px_-34px_rgba(186,92,35,0.4)] disabled:cursor-not-allowed disabled:opacity-55",
         lowStock && "border-primary/45 bg-primary/8"
       )}
     >
@@ -159,7 +159,7 @@ export function KasirView() {
   return (
     <div className="grid gap-4 xl:grid-cols-[1.7fr_0.95fr]">
       <div>
-        <Card className="border-white/60 bg-white/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
+        <Card className="border-border/60 bg-card/74 shadow-[0_28px_70px_-45px_rgba(66,38,20,0.55)]">
           <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <CardTitle className="font-heading text-2xl">Produk siap jual</CardTitle>
@@ -175,7 +175,7 @@ export function KasirView() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Cari produk atau kategori"
-                  className="h-11 rounded-2xl border-border/80 bg-white/80 pl-9"
+                  className="h-11 rounded-2xl border-border/80 bg-card/80 pl-9"
                 />
               </div>
               <div className="flex flex-wrap gap-2">
@@ -210,7 +210,7 @@ export function KasirView() {
                 ))}
               </div>
             ) : (
-              <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[26px] border border-dashed border-border bg-white/55 text-center">
+              <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[26px] border border-dashed border-border bg-card/55 text-center">
                 <PackageSearch className="size-10 text-muted-foreground" />
                 <p className="mt-4 font-heading text-xl font-semibold">Produk tidak ditemukan</p>
                 <p className="mt-2 max-w-md text-sm text-muted-foreground">
@@ -223,7 +223,7 @@ export function KasirView() {
       </div>
 
       <div>
-        <Card className="glass-panel sticky top-4 border-white/60 shadow-[0_28px_70px_-48px_rgba(66,38,20,0.6)]">
+        <Card className="glass-panel sticky top-4 border-border/60 shadow-[0_28px_70px_-48px_rgba(66,38,20,0.6)]">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -234,13 +234,13 @@ export function KasirView() {
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            <ScrollArea className="h-[300px] rounded-[22px] border border-border/70 bg-white/60 p-3">
+            <ScrollArea className="h-[300px] rounded-[22px] border border-border/70 bg-card/60 p-3">
               {cartLines.length > 0 ? (
                 <div className="space-y-3">
                   {cartLines.map((line) => (
                     <div
                       key={line.product.id}
-                      className="rounded-[20px] border border-border/70 bg-white/85 p-3"
+                      className="rounded-[20px] border border-border/70 bg-card/85 p-3"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>

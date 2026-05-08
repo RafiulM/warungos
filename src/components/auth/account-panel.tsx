@@ -24,7 +24,7 @@ export function AccountPanel() {
 
   if (isPending) {
     return (
-      <div className="mt-4 rounded-[24px] border border-border/70 bg-white/55 p-4">
+      <div className="mt-4 rounded-[24px] border border-border/70 bg-card/55 p-4">
         <p className="text-sm text-muted-foreground">Memuat sesi akun...</p>
       </div>
     );
@@ -35,7 +35,7 @@ export function AccountPanel() {
   }
 
   return (
-    <div className="mt-4 rounded-[24px] border border-border/70 bg-white/55 p-4">
+    <div className="mt-4 rounded-[24px] border border-border/70 bg-card/55 p-4">
       <div className="flex items-center gap-3">
         <div className="flex size-10 items-center justify-center rounded-xl bg-foreground text-background">
           <span className="text-xs font-semibold">
