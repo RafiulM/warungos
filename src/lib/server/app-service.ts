@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { timingSafeEqual } from "node:crypto";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db, pool } from "@/db/client";
 import {
@@ -182,11 +183,56 @@ export async function ensureAppReady() {
   await initializationPromise;
 }
 
+/**
+ * Static Bearer-token auth for API testing in production.
+ *
+ * Active only when BOTH `API_TEST_TOKEN` and `API_TEST_USER_ID` env vars are
+ * set. A request with `Authorization: Bearer <API_TEST_TOKEN>` is treated as
+ * the user identified by `API_TEST_USER_ID`. Token compare is constant-time.
+ *
+ * This is a long-lived credential with no expiry — keep it secret, scope it to
+ * a throwaway test account, and rotate it by changing the env var.
+ */
+function resolveTestBearer(headerList: Headers): SessionHint {
+  const token = process.env.API_TEST_TOKEN;
+  const testUserId = process.env.API_TEST_USER_ID;
+  if (!token || !testUserId) {
+    return null;
+  }
+
+  const match = /^Bearer\s+(.+)$/i.exec((headerList.get("authorization") ?? "").trim());
+  if (!match) {
+    return null;
+  }
+
+  const provided = Buffer.from(match[1]);
+  const expected = Buffer.from(token);
+  if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
+    return null;
+  }
+
+  return {
+    user: {
+      id: testUserId,
+      name: process.env.API_TEST_USER_NAME ?? "API Test",
+      email: process.env.API_TEST_USER_EMAIL ?? null,
+    },
+  };
+}
+
 export async function getRequestUser() {
   await ensureAppReady();
 
+  const headerList = await headers();
+
+  const testSession = resolveTestBearer(headerList);
+  if (testSession?.user?.id) {
+    await ensureWorkspace(testSession.user.id, testSession);
+    return { userId: testSession.user.id, session: testSession };
+  }
+
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: headerList,
   });
 
   if (!session?.user?.id) {
