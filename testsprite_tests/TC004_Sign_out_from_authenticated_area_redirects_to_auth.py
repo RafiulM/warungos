@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,13 +27,13 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Fill the email and password fields with the provided credentials and submit the form to sign in.
+        # -> Fill the email and password fields and submit the auth form to sign in.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
@@ -50,13 +49,41 @@ async def run_test():
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the account panel by clicking the avatar/account button (element index 449) to reveal the sign-out option.
+        # -> Open the account panel to reveal the sign out option.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Keluar' button (element index 636) to sign out and wait for the app to redirect to /auth, then verify the authentication form is displayed.
+        # -> Click the 'Keluar' (sign out) button to sign out, then verify the app redirects to /auth and the authentication form is displayed.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[2]/div/aside/div[2]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Fill the email and password fields with the provided credentials and submit the sign-in form to sign in.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
+        
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('admin123')
+        
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Open the account panel so the 'Keluar' (sign out) button is visible, then trigger sign out.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[2]/div/div/div/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Click the 'Keluar' (sign out) button (index 1221) to sign out, then wait for the app to redirect to /auth and show the authentication form.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/aside/div[2]/button').nth(0)

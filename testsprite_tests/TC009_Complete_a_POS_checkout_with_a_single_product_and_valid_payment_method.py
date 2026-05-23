@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,13 +27,13 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Fill the email and password fields and submit the auth form (input email into element index 2, password into index 3, then click submit index 97).
+        # -> Fill the email and password fields with the provided credentials and submit the auth form.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
@@ -50,196 +49,45 @@ async def run_test():
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the Kasir (POS) navigation item to open the cashier/pos page (element index 350).
+        # -> Click the 'Kasir' (POS) navigation item in the sidebar to open the cashier page.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the Kasir (POS) page so the cashier UI and product list are visible (navigate to /kasir).
-        await page.goto("http://localhost:3001/kasir", wait_until="commit", timeout=10000)
-        
-        # -> Open the Inventaris page to add a product so it can be added from the Kasir page (click the Inventaris navigation item).
+        # -> Open the Kasir (cashier) page by clicking the sidebar 'Kasir' navigation item to reveal the cashier UI and product list.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a[3]').nth(0)
+        elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the Kasir (POS) page to view the cashier UI and the cart so product addition and checkout can be completed (click the Kasir navigation item).
+        # -> Open the Kasir (POS) page by clicking the 'Kasir' sidebar item to reveal the cashier UI (product list, cart, payment buttons) so the checkout result can be verified or the flow retried.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Navigate to the Kasir (POS) page so the cashier UI and product list/cart are visible, then add the first available product to the cart.
-        await page.goto("http://127.0.0.1:3001/kasir", wait_until="commit", timeout=10000)
-        
-        # -> Fill the sign-in form (email+password) and submit to sign in so the dashboard can be accessed and the cashier flow continued.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin123')
-        
+        # -> Open the Kasir (POS) page from the sidebar so the cashier UI is visible and then add the first product to the cart.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Submit the auth form again to sign in (re-enter credentials if needed) so the dashboard can be accessed.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin123')
-        
+        # -> Add the first product to the cart by clicking its 'Tap' button, select Tunai, complete checkout, then extract page texts/notifications to verify a success confirmation and that the cart is cleared.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div[2]/div/div/main/div/div/div/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Submit the sign-in form by clicking the 'Masuk ke dashboard' button so the dashboard loads and the cashier flow can continue.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div[2]/div/div/main/div/div[2]/div/div[2]/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Masuk ke dashboard' button to submit the sign-in form and wait for the dashboard to load.
+        # -> Click the 'Selesaikan transaksi' button to complete checkout, then capture visible notifications and cart area text to verify a success confirmation and that the cart is cleared.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Submit the sign-in form by clicking the 'Masuk ke dashboard' button so the dashboard can be accessed and the cashier flow continued.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Submit the sign-in form (enter email and password, then click 'Masuk ke dashboard') so the dashboard can be accessed and the cashier flow continued.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin123')
-        
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Submit the sign-in form by clicking the 'Masuk ke dashboard' button to authenticate and load the dashboard so the POS flow can continue.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Submit the sign-in form by clicking 'Masuk ke dashboard' and wait for the dashboard to load so the POS flow can continue.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button to submit the sign-in form and wait for the dashboard to load so the POS flow can continue.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Fill email and password with provided credentials and submit the sign-in form to reach the dashboard.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin123')
-        
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button to submit the sign-in form and wait for the dashboard to load (if authentication succeeds, proceed to Kasir).
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button to submit the sign-in form and wait for dashboard to load so the POS flow can continue.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button (element index 2463) to submit the sign-in form, then wait for the dashboard to load.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Fill the email and password fields with admin@admin.com / admin123 and click 'Masuk ke dashboard' to attempt sign-in again.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin123')
-        
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button to submit sign-in, then wait for the dashboard to load so the POS flow can continue.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button to submit the sign-in form and wait for the dashboard to load (element index 2628).
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Masuk ke dashboard' button (index 2628) to attempt sign-in and load the dashboard, then wait for the page to respond.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Fill the email and password on the /auth page and submit the sign-in form to load the dashboard so the POS flow can continue.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin@admin.com')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('admin123')
-        
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div[2]/div/div/main/div/div[2]/div/div[2]/div[3]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state

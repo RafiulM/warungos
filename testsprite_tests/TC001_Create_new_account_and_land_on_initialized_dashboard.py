@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,19 +27,19 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Toggle to the sign up mode by clicking the 'Daftar' button (index 6).
+        # -> Click the 'Daftar' button to switch the form to sign up mode.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div/button[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the sign-up form: set owner name, set a unique email, set password, then submit the form (click 'Buat akun baru').
+        # -> Fill the owner name field with 'Owner TC001' then fill email and password, and submit the sign-up form.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
@@ -49,23 +48,45 @@ async def run_test():
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('owner.tc001+20260328@example.com')
+        await page.wait_for_timeout(3000); await elem.fill('owner.tc001+20260328T000000@example.com')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div[3]/input').nth(0)
         await page.wait_for_timeout(3000); await elem.fill('ValidPass123!')
         
-        # -> Click the 'Buat akun baru' button to submit the sign-up form and wait for the dashboard to load.
+        # -> Click the 'Buat akun baru' submit button to create the account and wait for the page to redirect to the dashboard.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # --> Test passed — verified by AI agent
+        # -> Try signing up again using a different unique email and submit the form to reach the dashboard.
         frame = context.pages[-1]
-        current_url = await frame.evaluate("() => window.location.href")
-        assert current_url is not None, "Test completed successfully"
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[3]/div[2]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('owner.tc001+20260328T000001@example.com')
+        
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[3]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Try signing up one more time using a fresh unique email, submit the sign-up form, and verify redirect to the dashboard and overview metrics.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[3]/div[2]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('owner.tc001+20260328T000002@example.com')
+        
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[3]/div[3]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # --> Assertions to verify final state
+        frame = context.pages[-1]
+        assert '/dashboard' in frame.url
+        await expect(frame.locator('text=Overview').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:

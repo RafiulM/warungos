@@ -1,7 +1,6 @@
 import asyncio
 from playwright import async_api
 from playwright.async_api import expect
-from _base_url import bind_base_url
 
 async def run_test():
     pw = None
@@ -28,13 +27,13 @@ async def run_test():
         context.set_default_timeout(5000)
 
         # Open a new page in the browser context
-        page = bind_base_url(await context.new_page())
+        page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
         # -> Navigate to http://localhost:3001/auth
         await page.goto("http://localhost:3001/auth", wait_until="commit", timeout=10000)
         
-        # -> Fill the email and password fields and submit the auth form to sign in as admin@admin.com, then wait for the dashboard to load.
+        # -> Fill the email field with the admin credentials and submit the login form.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/div/input').nth(0)
@@ -50,19 +49,16 @@ async def run_test():
         elem = frame.locator('xpath=/html/body/div[2]/div/div[2]/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Kasir' (POS) navigation item to open the POS page.
+        # -> Click the navigation item for the POS page (Kasir) to open the POS interface.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Kasir' (POS) navigation item to open the POS page and wait for the POS UI to load.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div[2]/div/aside/nav/a[2]').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        # -> Open the POS interface by navigating to /kasir so the checkout controls and cart are visible, then attempt to complete checkout with no items in the cart.
+        await page.goto("http://localhost:3001/kasir", wait_until="commit", timeout=10000)
         
-        # -> Click the 'Selesaikan transaksi' (checkout) button to attempt checkout with an empty cart and observe any validation error or prevention message.
+        # -> Click the 'Selesaikan transaksi' (complete transaction) button to attempt checkout with an empty cart and verify that a validation error prevents completing the transaction.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[2]/div/div/main/div/div[2]/div/div[2]/div[3]/button').nth(0)
